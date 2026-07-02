@@ -109,7 +109,7 @@ class App {
         r.render(result)
         val link = document.createElement("a") as HTMLAnchorElement
         link.href = dataUrl
-        link.download = "parket-layout.png"
+        link.download = "floormate-layout.png"
         document.body?.appendChild(link)
         link.click()
         document.body?.removeChild(link)

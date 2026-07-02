@@ -4,7 +4,7 @@ import dom.window
 import layout.OffsetPattern
 import model.RoomParams
 
-private const val STORAGE_KEY = "parket.params"
+private const val STORAGE_KEY = "floormate.params"
 
 private external object JSON {
     fun stringify(value: dynamic): String

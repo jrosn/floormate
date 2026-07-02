@@ -10,7 +10,7 @@ kotlin {
     js(IR) {
         browser {
             commonWebpackConfig {
-                outputFileName = "parket.js"
+                outputFileName = "floormate.js"
             }
         }
         binaries.executable()
