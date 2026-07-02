@@ -17,6 +17,50 @@ body {
     line-height: 1.5;
 }
 
+.github-fork-ribbon {
+    width: 12.1em;
+    height: 12.1em;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    font-size: 13px;
+    text-decoration: none;
+    text-indent: -999999px;
+    pointer-events: none;
+}
+
+.github-fork-ribbon.fixed {
+    position: fixed;
+}
+
+.github-fork-ribbon:hover,
+.github-fork-ribbon:focus {
+    text-decoration: none;
+}
+
+.github-fork-ribbon::before {
+    content: attr(data-ribbon);
+    color: #fff;
+    font: 700 1em "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.54em;
+    text-decoration: none;
+    text-align: center;
+    text-indent: 0;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    padding: 0.5em 0;
+    background-color: #a00;
+    width: 15.38em;
+    height: 1.54em;
+    top: 3.23em;
+    right: -3.23em;
+    transform: rotate(45deg);
+    box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
 .container {
     max-width: 1400px;
     height: 100vh;
