@@ -45,7 +45,7 @@ class FloorRenderer(private val canvas: HTMLCanvasElement) {
         drawWallGap(ctx, offsetX, offsetY, scale, result)
         drawPlanks(ctx, offsetX, offsetY, scale, result)
         drawRoomDimensions(ctx, offsetX, offsetY, drawW, drawH, result)
-        drawStats(ctx, offsetY + drawH + 20, result)
+        drawStats(ctx, offsetX, offsetY + drawH + 20, result)
     }
 
     private fun computeDisplaySize(): Pair<Double, Double> {
@@ -294,6 +294,7 @@ class FloorRenderer(private val canvas: HTMLCanvasElement) {
 
     private fun drawStats(
         ctx: CanvasRenderingContext2D,
+        x: Double,
         y: Double,
         result: LayoutResult,
     ) {
@@ -306,7 +307,7 @@ class FloorRenderer(private val canvas: HTMLCanvasElement) {
             "Полных панелей: ${stats.fullPanels}  |  " +
             "Из обрезков: ${stats.cutoffs}  |  " +
             "Отходы: ${formatPercent(stats.wastePercent)}%"
-        ctx.fillText(text, 20.0, y)
+        ctx.fillText(text, x, y)
     }
 
     fun toPngDataUrl(): String = canvas.toDataURL("image/png")
