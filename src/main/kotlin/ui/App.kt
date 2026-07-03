@@ -2,6 +2,7 @@ package ui
 
 import dom.document
 import dom.window
+import kotlin.random.Random
 import layout.LayoutEngine
 import layout.OffsetPattern
 import model.RoomParams
@@ -27,6 +28,7 @@ class App {
     private lateinit var minTrimInput: HTMLInputElement
     private lateinit var wallGapInput: HTMLInputElement
     private lateinit var offsetSelect: HTMLSelectElement
+    private var randomSeed: Long? = null
 
     fun mount() {
         errorDiv = document.getElementById("error") as HTMLDivElement
@@ -40,6 +42,7 @@ class App {
         offsetSelect = document.getElementById("offset") as HTMLSelectElement
 
         renderer = FloorRenderer(canvas)
+        randomSeed = UrlParams.loadSeed()
         restoreSavedParams()
         bindAutoSave()
 
@@ -53,26 +56,46 @@ class App {
             lastResult?.let { renderer?.render(it) }
         })
 
+        window.addEventListener("popstate", { _ ->
+            randomSeed = UrlParams.loadSeed()
+            restoreSavedParams()
+            calculate(updateUrl = false)
+        })
+
         calculate()
         window.setTimeout({ lastResult?.let { renderer?.render(it) } }, 0)
     }
 
-    private fun calculate() {
+    private fun calculate(updateUrl: Boolean = true) {
         hideError()
         try {
-            val params = readParams()
-            val validationError = params.validate()
+            val baseParams = readParams()
+            val validationError = baseParams.validate()
             if (validationError != null) {
                 showError(validationError)
                 return
             }
+            val params = resolveRandomSeed(baseParams)
             val result = engine.calculate(params)
             lastResult = result
             ParamsStorage.save(params)
+            if (updateUrl) {
+                UrlParams.update(params)
+            }
             renderer?.render(result)
         } catch (e: Exception) {
             showError(e.message ?: "Ошибка расчёта")
         }
+    }
+
+    private fun resolveRandomSeed(params: RoomParams): RoomParams {
+        if (params.offset != OffsetPattern.RANDOM) {
+            randomSeed = null
+            return params
+        }
+        val seed = randomSeed ?: Random.nextLong()
+        randomSeed = seed
+        return params.copy(randomSeed = seed)
     }
 
     private fun readParams(): RoomParams {
@@ -126,7 +149,11 @@ class App {
     }
 
     private fun restoreSavedParams() {
-        val saved = ParamsStorage.load() ?: return
+        val saved = UrlParams.load() ?: ParamsStorage.load() ?: return
+        applySavedForm(saved)
+    }
+
+    private fun applySavedForm(saved: SavedForm) {
         roomLengthInput.value = saved.roomLength
         roomWidthInput.value = saved.roomWidth
         panelLengthInput.value = saved.panelLength

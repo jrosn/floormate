@@ -10,6 +10,7 @@ data class RoomParams(
     val minTrimLength: Double,
     val wallGap: Double = 10.0,
     val offset: OffsetPattern = OffsetPattern.HALF,
+    val randomSeed: Long? = null,
 ) {
     fun validate(): String? {
         if (roomLength <= 0) return "Длина комнаты должна быть больше 0"

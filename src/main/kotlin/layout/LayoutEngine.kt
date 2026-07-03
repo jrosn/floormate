@@ -38,10 +38,12 @@ class LayoutEngine {
         val lastRowDepth = usableDepth - fullRows * plankWidth
         val rowCount = fullRows + if (lastRowDepth > 0.001) 1 else 0
 
+        val random = params.randomSeed?.let { Random(it) }
+
         for (row in 0 until rowCount) {
             val rowDepth = if (row == rowCount - 1 && lastRowDepth > 0.001) lastRowDepth else plankWidth
             val rowY = params.wallGap + row * plankWidth
-            val offset = rowOffset(params.offset, row, plankLen, pool)
+            val offset = rowOffset(params.offset, row, plankLen, pool, random)
 
             val rowPieces = layoutRow(
                 rowIndex = row,
@@ -103,6 +105,7 @@ class LayoutEngine {
         rowIndex: Int,
         plankLen: Double,
         pool: CutoffPool,
+        random: Random?,
     ): Double = when (pattern) {
         OffsetPattern.HALF -> if (rowIndex % 2 == 1) plankLen / 2.0 else 0.0
         OffsetPattern.THIRD -> when (rowIndex % 3) {
@@ -116,7 +119,7 @@ class LayoutEngine {
                 candidate.coerceAtMost(plankLen - 1.0)
             } else {
                 val maxOffset = plankLen - 1.0
-                if (maxOffset <= 0) 0.0 else Random.nextDouble(0.0, maxOffset)
+                if (maxOffset <= 0) 0.0 else (random ?: Random.Default).nextDouble(0.0, maxOffset)
             }
         }
     }
